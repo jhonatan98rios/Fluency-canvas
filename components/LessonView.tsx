@@ -124,8 +124,8 @@ export default function LessonView() {
   const { current, currentIndex, hasPrev, hasNext, next, prev, goTo } =
     useLesson(LESSONS, savedIndex);
 
-  const recognizerRef = useRef<HandwritingRecognizer>(new TemplateRecognizer(0.70));
-  const comparerRef = useRef<BitmapComparer>(new SSIMComparer(0.70));
+  const recognizerRef = useRef<HandwritingRecognizer>(new TemplateRecognizer(0.50));
+  const comparerRef = useRef<BitmapComparer>(new SSIMComparer(0.50));
 
   // Persist settings on change
   useEffect(() => { saveJson(LS_COLOR, color); }, [color]);
