@@ -93,8 +93,16 @@ function speak(text: string, lang: string): void {
   if (!("speechSynthesis" in window)) return;
   window.speechSynthesis.cancel();
   const u = new SpeechSynthesisUtterance(text);
-  u.lang = SPEECH_LANG[lang] ?? lang;
+  const bcp = SPEECH_LANG[lang] ?? lang;
+  u.lang = bcp;
   u.rate = 0.8;
+
+  // Pick a native voice for the language, fall back to default.
+  const voices = window.speechSynthesis.getVoices();
+  const match = voices.find((v) => v.lang.startsWith(bcp)) ??
+                voices.find((v) => v.lang.startsWith(lang));
+  if (match) u.voice = match;
+
   window.speechSynthesis.speak(u);
 }
 
@@ -116,7 +124,7 @@ export default function LessonView() {
   const { current, currentIndex, hasPrev, hasNext, next, prev, goTo } =
     useLesson(LESSONS, savedIndex);
 
-  const recognizerRef = useRef<HandwritingRecognizer>(new TemplateRecognizer(0.30));
+  const recognizerRef = useRef<HandwritingRecognizer>(new TemplateRecognizer(0.90));
   const comparerRef = useRef<BitmapComparer>(new SSIMComparer(0.90));
 
   // Persist settings on change

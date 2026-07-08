@@ -90,9 +90,14 @@ export class SSIMComparer implements BitmapComparer {
     const px = data.data;
     for (let i = 0; i < n; i++) {
       const base = i * 4;
-      // Weighted by alpha so transparent regions don't distort the mean.
-      const alpha = px[base + 3] / 255;
-      out[i] = (0.299 * px[base] + 0.587 * px[base + 1] + 0.114 * px[base + 2]) * alpha;
+      // Treat fully transparent as white (paper), ink as dark.
+      // ponytail: alpha=0 → 255 so SSIM sees both template and user
+      // drawing as black-on-white, not black-on-black.
+      if (px[base + 3] === 0) {
+        out[i] = 255;
+      } else {
+        out[i] = 0.299 * px[base] + 0.587 * px[base + 1] + 0.114 * px[base + 2];
+      }
     }
     return out;
   }
