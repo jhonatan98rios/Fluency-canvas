@@ -14,13 +14,13 @@ import { renderTemplate } from "@/lib/utils/renderTemplate";
  * (default: IoUComparer). Swap the comparer to change the matching
  * algorithm without touching recognition logic.
  *
- * @param threshold - IoU threshold 0–1. Default 0.08.
+ * @param threshold - IoU threshold 0–1. Default 0.30.
  *   See lib/similarity/types.ts for tuning guidance.
  */
 export class TemplateRecognizer implements HandwritingRecognizer {
   private comparer: IoUComparer;
 
-  constructor(threshold: number = 0.08) {
+  constructor(threshold: number = 0.30) {
     this.comparer = new IoUComparer(threshold);
   }
 

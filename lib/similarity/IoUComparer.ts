@@ -10,12 +10,12 @@ import type { BitmapComparer, ComparisonResult } from "./types";
  * Best for tracing-oriented UX where the overlay anchors the user
  * and exact pixel overlap is expected.
  *
- * threshold: 0–1. Default 0.08 (lenient — even a partial trace passes).
+ * threshold: 0–1. Default 0.30 (tracing-oriented, ~30% overlap expected).
  */
 export class IoUComparer implements BitmapComparer {
   readonly name = "IoU";
 
-  constructor(private threshold: number = 0.08) {}
+  constructor(private threshold: number = 0.30) {}
 
   compare(a: ImageData, b: ImageData): ComparisonResult {
     if (a.width !== b.width || a.height !== b.height) {

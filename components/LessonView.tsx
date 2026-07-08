@@ -87,6 +87,17 @@ function playFailureSound(): void {
   osc.stop(now + 0.2);
 }
 
+const SPEECH_LANG: Record<string, string> = { zh: "zh-CN", ja: "ja-JP", ko: "ko-KR" };
+
+function speak(text: string, lang: string): void {
+  if (!("speechSynthesis" in window)) return;
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = SPEECH_LANG[lang] ?? lang;
+  u.rate = 0.8;
+  window.speechSynthesis.speak(u);
+}
+
 // ── Component ───────────────────────────────────────────────────
 
 type RecognitionState = "idle" | "recognizing" | "success" | "failure";
@@ -105,8 +116,8 @@ export default function LessonView() {
   const { current, currentIndex, hasPrev, hasNext, next, prev, goTo } =
     useLesson(LESSONS, savedIndex);
 
-  const recognizerRef = useRef<HandwritingRecognizer>(new TemplateRecognizer(0.08));
-  const comparerRef = useRef<BitmapComparer>(new SSIMComparer(0.30));
+  const recognizerRef = useRef<HandwritingRecognizer>(new TemplateRecognizer(0.30));
+  const comparerRef = useRef<BitmapComparer>(new SSIMComparer(0.90));
 
   // Persist settings on change
   useEffect(() => { saveJson(LS_COLOR, color); }, [color]);
@@ -173,6 +184,7 @@ export default function LessonView() {
         const victory = recResult.matched || simResult.passed;
         if (victory) {
           playSuccessSound();
+          speak(current.pronunciation, current.language);
           setRecState("success");
           autoAdvanceRef.current = setTimeout(goNext, 1800);
         } else {
@@ -183,6 +195,7 @@ export default function LessonView() {
       .catch(() => {
         if (simResult.passed) {
           playSuccessSound();
+          speak(current.pronunciation, current.language);
           setRecState("success");
           autoAdvanceRef.current = setTimeout(goNext, 1800);
         } else {
